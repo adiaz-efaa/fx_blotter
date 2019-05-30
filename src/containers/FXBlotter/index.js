@@ -1,15 +1,20 @@
-import React, { useState } from 'react'
-import '../../index2.css'
+import React from 'react'
 import { connect } from 'react-redux'
+import InputForm from '../../components/InputForm'
+import '../../index2.css'
 
 
 const FXBlotter = (props) => {
+  console.log('ops')
+  console.log(props.ops)
   const {fecha, bid, ask, blotterStyle, headerStyle, flexH} = {...props}
   const opsArray = Object.keys(props.ops).map((key) => props.ops[key])
+  console.log('ops array')
+  console.log(opsArray)
   return (
-    <div >
+    <div className='encabezado'>
+      <h1>FX Blotter</h1>
       <div className={headerStyle}>
-        <h1>FX Blotter</h1>
         <div className={blotterStyle}>
           <table>
             <tbody>
@@ -57,7 +62,7 @@ const FXBlotter = (props) => {
                   <td id={'fx-' + op.numop} contentEditable={op.editable} onKeyUp={props.editaCelda}>{op.fxrate}</td>
                   <td id={'cv-' + op.numop} contentEditable={op.editable} onKeyUp={props.editaCelda}>{op.cv}</td>
                   <td id={'mn-' + op.numop} contentEditable={op.editable} onKeyUp={props.editaCelda}>
-                    {op.monto.toLocaleString(undefined)}</td>
+                    {op.monto.toLocaleString(undefined, {minimumFractionDigits: 0})}</td>
                   <td id={'pr-' + op.numop} contentEditable={op.editable} onKeyUp={props.editaCelda}>
                     {op.precio.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                   <td>
@@ -110,19 +115,7 @@ const FXBlotter = (props) => {
               </tbody>
             </table>
           </div>
-        <div className='form'>
-          <h2>Nueva Operación</h2>
-          <form>
-            <input placeholder='Cliente'/>
-            <select name='C / V'>
-              <option value="compra">Compra</option>
-              <option value="venta">Venta</option>
-            </select>
-            <input placeholder='Monto'/>
-            <input placeholder='precio'/>
-            <input type="submit" value="Agregar" />
-          </form>
-        </div>
+        <InputForm handleChange={props.actualizaForma} inputForm={props.inputForm} handleSubmit={props.submitForma} />
       </div>
     </div>
 
@@ -141,7 +134,8 @@ const mapStateToProps = (state) => {
     ventas: state.getVentas,
     ppventa: state.getPpventa,
     resTrading: state.getResTrading,
-    resPos: state.getResPos
+    resPos: state.getResPos,
+    inputForm: state.inputForm
   }
 }
 
@@ -154,7 +148,10 @@ const mapDispatchToProps = (dispatch) => {
     },
     eliminaOperacion: (event) => dispatch({type: 'ELIM_OP', whichOp: event.target.id}),
     editaOperacion: (event) => dispatch({type: 'EDIT_OP', whichOp: event.target.id, rest: event.target.value}),
-    editaCelda: (event) => dispatch({type: 'EDIT_CELDA', whichCellOp: event.target.id, newValue: event.target.textContent})
+    editaCelda: (event) => dispatch({type: 'EDIT_CELDA', whichCellOp: event.target.id, newValue: event.target.textContent}),
+    actualizaForma: (event) => dispatch({type: 'UPDATE_FORM_FIELD', whichField: event.target.id, newValue: event.target.value}),
+    submitForma: (event) => {event.preventDefault()
+      return dispatch({type: 'SUBMIT_FORM'})}
   }
 }
 

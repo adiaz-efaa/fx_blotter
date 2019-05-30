@@ -33,7 +33,7 @@ const sumaVentas = (acum, op) => {
 }
 
 const initialState = {
-  fecha: '1969-01-12',
+  fecha: '2019-05-28',
   bid: 700.00,
   ask: 700.30,
   ops: {
@@ -43,6 +43,7 @@ const initialState = {
     4: {numop: 4, cliente: 'Estado', fxrate: 'USDCLP', cv: 'Compra', monto: 1000000, precio: 701, editable: false},
   },
   nextNumop: 5,
+  inputForm: {cliente: '',  cv: 'Compra', monto: '', precio: ''},
   getOpsArray: function() {
     return Object.keys(this.ops).map(key => this.ops[key])
   },
@@ -125,6 +126,35 @@ const update = (state = initialState, action) => {
     const value = Number(action.newValue)
     //alert(value)
     return {...state, ops: {...state.ops, [op]: {...state.ops[op], [prop[celda]]: value}}}
+  }
+
+  if (action.type === 'UPDATE_FORM_FIELD') {
+    const campo = action.whichField
+    let valor // Declared but not initialized
+    if (campo === 'monto') {
+      valor = action.newValue.replace(/\D/,'')
+    } else {
+      valor = action.newValue
+    }
+    const newState = {...state, inputForm: {...state.inputForm, [campo]: valor}}
+    return newState
+  }
+
+  if (action.type === 'SUBMIT_FORM') {
+    const newState = {...state,
+      ops: {...state.ops,
+        [state.nextNumop]: { numop: state.nextNumop,
+          cliente: state.inputForm.cliente,
+          fxrate: 'USDCLP',
+          cv: state.inputForm.cv,
+          monto: parseInt(state.inputForm.monto),
+          precio: parseFloat(state.inputForm.precio),
+          editable: false},
+      },
+      nextNumop: state.nextNumop + 1
+    }
+
+    return newState
   }
 
   return state

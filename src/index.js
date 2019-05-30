@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
+import { BrowserRouter as Router, Route} from "react-router-dom"
 import update from './redux/reducer'
 import './index.css';
 import './index2.css';
@@ -13,7 +14,9 @@ const store = createStore(update)
 const ToRender = () => {
   return (
     <Provider store={store}>
-      <FXBlotter headerStyle='header' blotterStyle='blotter' flexH='flex-h' />
+      <Router>
+        <FXBlotter headerStyle='header' blotterStyle='blotter' flexH='flex-h' />
+      </Router>
     </Provider>
   )
 }
